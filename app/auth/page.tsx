@@ -2,7 +2,7 @@
 // app/auth/page.tsx
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const AUTH_COOKIE = 'canfs_auth';
@@ -23,11 +23,7 @@ function setAuthCookie() {
   document.cookie = `${AUTH_COOKIE}=true; path=/; max-age=86400; samesite=lax${secure}`;
 }
 
-/**
- * ✅ FIX:
- * Financial Need Analysis should route to Dashboard instead of /fna.
- * So we map it to /dashboard.
- */
+// ✅ FIX: Financial Need Analysis should navigate to Dashboard, not /fna.
 const DESTINATIONS = [
   { value: 'dashboard', label: 'Dashboard', path: '/dashboard' },
   { value: 'fna', label: 'Financial Need Analysis', path: '/dashboard' }, // <-- FIXED
@@ -55,8 +51,7 @@ export default function LoginPage() {
   }, []);
 
   const selectedPath = useMemo(() => {
-    // ✅ Extra safety:
-    // If destination is 'fna', always send to dashboard
+    // ✅ Safety guard: even if destination is 'fna', always go to dashboard
     if (destination === 'fna') return '/dashboard';
 
     const dest = DESTINATIONS.find((d) => d.value === destination);
@@ -88,28 +83,22 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white shadow p-8">
-        <div className="text-center mb-6">
-          <div className="text-xl font-semibold">CAN Financial Solutions</div>
-          <div className="text-sm text-slate-500">Protecting Your Tomorrow</div>
-        </div>
-
-        <h3 className="text-lg font-semibold mb-4">Admin Login</h3>
+    <>
+      <div>
+        CAN Financial Solutions
+        <div>Protecting Your Tomorrow</div>
+        <h3>### Admin Login</h3>
 
         {error && (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          <div>
             {error}
           </div>
         )}
 
-        <form onSubmit={signIn} className="space-y-4">
+        <form onSubmit={signIn}>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Email
-            </label>
+            Email{' '}
             <input
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:ring-2 focus:ring-slate-300"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@email.com"
@@ -118,12 +107,9 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Password
-            </label>
+            Password{' '}
             <input
               type="password"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:ring-2 focus:ring-slate-300"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
@@ -132,11 +118,8 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Go to
-            </label>
+            Go to{' '}
             <select
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:ring-2 focus:ring-slate-300"
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
             >
@@ -148,20 +131,15 @@ export default function LoginPage() {
             </select>
           </div>
 
-          <button
-            type="submit"
-            className="w-full rounded-lg bg-slate-900 text-white py-2.5 font-medium hover:bg-slate-800 transition"
-          >
+          <button type="submit">
             Sign In →{' '}
             {DESTINATIONS.find((d) => d.value === destination)?.label ??
               'Dashboard'}
           </button>
         </form>
 
-        <div className="mt-6 text-center text-xs text-slate-500">
-          CAN Financial Solutions — Protecting Your Tomorrow
-        </div>
+        <div>CAN Financial Solutions — Protecting Your Tomorrow</div>
       </div>
-    </div>
+    </>
   );
 }

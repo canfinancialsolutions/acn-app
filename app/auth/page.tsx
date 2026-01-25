@@ -1,8 +1,13 @@
 // app/auth/page.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+// NOTE: This page is written to be safe for Next.js static prerender/export.
+// We avoid useSearchParams during build and instead read window.location.search in useEffect.
+
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+export const dynamic = 'force-dynamic';
 
 const AUTH_COOKIE = 'canfs_auth';
 
@@ -25,21 +30,36 @@ const DESTINATIONS = [
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const next = searchParams.get('next');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [destination, setDestination] = useState<string>('dashboard');
   const [error, setError] = useState<string | null>(null);
+  const [nextPath, setNextPath] = useState<string | null>(null);
+
+  // Read ?next=/path from the URL only on the client
+  useEffect(() => {
+    try {
+      if (typeof window === 'undefined') return;
+      const sp = new URLSearchParams(window.location.search);
+      const n = sp.get('next');
+      setNextPath(n && n.startsWith('/') ? n : null);
+    } catch {
+      setNextPath(null);
+    }
+  }, []);
+
+  const redirectDefault = useMemo(() => {
+    const dest = DESTINATIONS.find((d) => d.value === destination);
+    return dest?.path ?? '/dashboard';
+  }, [destination]);
 
   useEffect(() => {
-    // If already logged in, route to intended destination (next) if present; otherwise dashboard.
+    // If already logged in, route to intended destination (next) if present; otherwise chosen destination or dashboard.
     if (hasAuthCookie()) {
-      const safeNext = next && next.startsWith('/') ? next : '/dashboard';
-      router.replace(safeNext);
+      router.replace(nextPath ?? '/dashboard');
     }
-  }, [router, next]);
+  }, [router, nextPath]);
 
   const signIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,11 +73,10 @@ export default function LoginPage() {
 
     setAuthCookie();
 
-    const dest = DESTINATIONS.find((d) => d.value === destination);
-    const safeNext = next && next.startsWith('/') ? next : null;
-    const redirectTo = safeNext ?? dest?.path ?? '/dashboard';
-
-    router.replace(redirectTo);
+    // Navigation rule:
+    //  - If user came in with ?next=..., always honor it after sign-in.
+    //  - Otherwise, use the selected destination.
+    router.replace(nextPath ?? redirectDefault);
   };
 
   return (

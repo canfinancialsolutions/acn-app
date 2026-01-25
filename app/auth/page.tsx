@@ -1,9 +1,8 @@
-
 // app/auth/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const AUTH_COOKIE = 'canfs_auth';
 
@@ -14,8 +13,7 @@ function hasAuthCookie() {
 
 function setAuthCookie() {
   if (typeof document === 'undefined') return;
-  const secure =
-    typeof window !== 'undefined' && window.location?.protocol === 'https:' ? '; secure' : '';
+  const secure = typeof window !== 'undefined' && window.location?.protocol === 'https:' ? '; secure' : '';
   document.cookie = `${AUTH_COOKIE}=true; path=/; max-age=86400; samesite=lax${secure}`;
 }
 
@@ -27,6 +25,8 @@ const DESTINATIONS = [
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get('next');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,27 +34,28 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // If already logged in (cookie present), go straight to dashboard
+    // If already logged in, route to intended destination (next) if present; otherwise dashboard.
     if (hasAuthCookie()) {
-      router.replace('/dashboard');
+      const safeNext = next && next.startsWith('/') ? next : '/dashboard';
+      router.replace(safeNext);
     }
-  }, [router]);
+  }, [router, next]);
 
   const signIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    // TODO: replace with real auth; for now, accept any non-empty credentials
+    // Accept any non-empty credentials (placeholder auth)
     if (!email || !password) {
       setError('Please enter email and password');
       return;
     }
 
-    // Set simple auth cookie – used by dashboard guard
     setAuthCookie();
 
     const dest = DESTINATIONS.find((d) => d.value === destination);
-    const redirectTo = dest?.path ?? '/dashboard';
+    const safeNext = next && next.startsWith('/') ? next : null;
+    const redirectTo = safeNext ?? dest?.path ?? '/dashboard';
 
     router.replace(redirectTo);
   };
@@ -129,4 +130,3 @@ export default function LoginPage() {
     </div>
   );
 }
-``

@@ -1049,7 +1049,6 @@ export default function Page() {
               <div>
                 <div className="text-xl font-bold text-blue-800">{pageTitle}</div>
                 <div className="text-sm font-semibold text-yellow-500">Protecting Your Tomorrow</div>
-                <div className="text-sm text-slate-600">Select a client and complete all six sections of the FNA</div>
               </div>
             </div>
             <button
@@ -1075,6 +1074,7 @@ export default function Page() {
         {/* 1. Choose Client */}
         <Card
           title="1. Choose Client 👨🏻‍💼"
+          <div className="text-sm text-slate-600">Select a client and complete all six sections of the FNA</div>
           right={
             <div className="text-xs text-slate-500">
                      {selectedClient && (
@@ -1083,8 +1083,7 @@ export default function Page() {
                       <span className="text-slate-500">({selectedClient.email})</span>
                     </div>
                     )}
-              {clientLoading ? "Searching¦" : `${clientRows.length} result(s)`}
-            </div>
+             </div>
           }
         >
           <div className="space-y-3">

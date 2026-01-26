@@ -547,10 +547,10 @@ function EditableTable({
   );
 }
 
-export default function Page() {
-  const supabaseRef = useRef<ReturnType<typeof getSupabase> | null>(null);
-  if (!supabaseRef.current) supabaseRef.current = getSupabase();
-  const supabase = supabaseRef.current;
+//export default function Page() {
+ // const supabaseRef = useRef<ReturnType<typeof getSupabase> | null>(null);
+//  if (!supabaseRef.current) supabaseRef.current = getSupabase();
+ // const supabase = supabaseRef.current;
 
   const [authChecked, setAuthChecked] = useState(false);
 

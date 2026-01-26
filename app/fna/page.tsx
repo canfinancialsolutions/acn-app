@@ -3,6 +3,7 @@
 export const dynamic = "force-dynamic";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getSupabase } from "@/lib/supabaseClient";
 
 /**
@@ -105,7 +106,7 @@ const TAB_LABELS: Record<TabKey, string> = {
   insurance: "Insurance",
   income_estate: "Income & Estate",
 };
-
+ const router = useRouter(); 
 const US_STATES = [
   "",
   "Alabama",

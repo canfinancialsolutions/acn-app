@@ -20,18 +20,6 @@ function clearAuthCookie(): void {
 }
 
 import { createClient } from '@supabase/supabase-js';
- 
-// Add to your dashboard page (top section)
-<div className="flex justify-between items-center mb-6">
-  <h1 className="text-2xl font-bold">CAN Financial Solutions Dashboard</h1>
-  <button
-    onClick={() => window.location.href = '/auth'}
-    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-  >
-    ← Exit
-  </button>
-</div>
-
 
 type Prospect = {
   id: number;
@@ -163,7 +151,7 @@ const STATES = [
 
 const STATE_NAME_OPTIONS = STATES.map((s) => s.name);
 
-const stateToName = (v?: string | null) => {
+const stateToName = (v?: string | null): string => {
   const raw = (v || '').trim();
   if (!raw) return '';
 
@@ -181,8 +169,7 @@ const stateToName = (v?: string | null) => {
   return raw;
 };
 
-
-const yesNoNormalize = (v?: string | null) => {
+const yesNoNormalize = (v?: string | null): string => {
   const raw = (v || '').trim();
   const s = raw.toLowerCase();
   if (!s) return '';
@@ -194,10 +181,10 @@ const yesNoNormalize = (v?: string | null) => {
   return raw;
 };
 
-const normText = (s: string) =>
+const normText = (s: string): string =>
   s.trim().toLowerCase().replace(/[\u2010-\u2015\u2212]/g, "-");
 
-const toNull = (s: string | null | undefined) => {
+const toNull = (s: string | null | undefined): string | null => {
   const v = (s ?? '').trim();
   return v.length ? v : null;
 };
@@ -281,7 +268,15 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-function TextInput({ compact = false, placeholder = '', value = '', onChange, disabled = false }: any) {
+interface TextInputProps {
+  compact?: boolean;
+  placeholder?: string;
+  value?: string;
+  onChange?: (value: string) => void;
+  disabled?: boolean;
+}
+
+function TextInput({ compact = false, placeholder = '', value = '', onChange, disabled = false }: TextInputProps) {
   const cn = compact ? 'h-9' : 'h-10';
   return (
     <input
@@ -295,7 +290,14 @@ function TextInput({ compact = false, placeholder = '', value = '', onChange, di
   );
 }
 
-function DateInput({ compact = false, value = '', onChange, disabled = false }: any) {
+interface DateInputProps {
+  compact?: boolean;
+  value?: string;
+  onChange?: (value: string) => void;
+  disabled?: boolean;
+}
+
+function DateInput({ compact = false, value = '', onChange, disabled = false }: DateInputProps) {
   const cn = compact ? 'h-9' : 'h-10';
   return (
     <input
@@ -308,7 +310,14 @@ function DateInput({ compact = false, value = '', onChange, disabled = false }: 
   );
 }
 
-function YesNoCheckbox({ compact = false, value = '', onChange, disabled = false }: any) {
+interface YesNoCheckboxProps {
+  compact?: boolean;
+  value?: string;
+  onChange?: (value: string) => void;
+  disabled?: boolean;
+}
+
+function YesNoCheckbox({ compact = false, value = '', onChange, disabled = false }: YesNoCheckboxProps) {
   const checked = value === 'Yes';
   const handleToggle = () => {
     if (disabled) return;
@@ -327,7 +336,13 @@ function YesNoCheckbox({ compact = false, value = '', onChange, disabled = false
   );
 }
 
-function CommentsEditor({ value = '', onChange, disabled = false }: any) {
+interface CommentsEditorProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  disabled?: boolean;
+}
+
+function CommentsEditor({ value = '', onChange, disabled = false }: CommentsEditorProps) {
   return (
     <textarea
       className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 placeholder-slate-400"
@@ -749,7 +764,7 @@ export default function ProspectPage() {
                   onClick={handleTopAction}
                   title={!canTopAction && !(showCard && mode === 'edit') ? 'Select a row to edit' : undefined}
                 >
-                  {saving && showCard && mode === 'edit' ? 'Saving...¦' : topActionLabel}
+                  {saving && showCard && mode === 'edit' ? 'Saving...' : topActionLabel}
                 </button>
 
                 <button
@@ -800,7 +815,7 @@ export default function ProspectPage() {
                     {loading ? (
                       <tr>
                         <td colSpan={21} className="px-3 py-6 text-center text-slate-500">
-                          Loading...¦
+                          Loading...
                         </td>
                       </tr>
                     ) : pageRows.length === 0 ? (
@@ -810,7 +825,7 @@ export default function ProspectPage() {
                         </td>
                       </tr>
                     ) : (
-                      pageRows.map((p, idx) => {
+                      pageRows.map((p) => {
                         const isActive = p.id === activeId;
                         return (
                           <tr
@@ -887,7 +902,7 @@ export default function ProspectPage() {
                 disabled={!canBottomAction}
                 onClick={handleBottomAction}
               >
-                {saving && showCard && mode === 'new' ? 'Saving...¦' : bottomPrimaryLabel}
+                {saving && showCard && mode === 'new' ? 'Saving...' : bottomPrimaryLabel}
               </button>
 
               {showCard && mode === 'new' && (
@@ -938,7 +953,7 @@ export default function ProspectPage() {
                       compact
                       placeholder="First Name"
                       value={form.first_name}
-                      onChange={(v) => setForm((p) => ({ ...p, first_name: v }))}
+                      onChange={(v: string) => setForm((p) => ({ ...p, first_name: v }))}
                       disabled={saving}
                     />
                   </Field>
@@ -948,7 +963,7 @@ export default function ProspectPage() {
                       compact
                       placeholder="Last Name"
                       value={form.last_name}
-                      onChange={(v) => setForm((p) => ({ ...p, last_name: v }))}
+                      onChange={(v: string) => setForm((p) => ({ ...p, last_name: v }))}
                       disabled={saving}
                     />
                   </Field>
@@ -958,7 +973,7 @@ export default function ProspectPage() {
                       compact
                       placeholder="Spouse Name"
                       value={form.spouse_name}
-                      onChange={(v) => setForm((p) => ({ ...p, spouse_name: v }))}
+                      onChange={(v: string) => setForm((p) => ({ ...p, spouse_name: v }))}
                       disabled={saving}
                     />
                   </Field>
@@ -987,7 +1002,7 @@ export default function ProspectPage() {
                       compact
                       placeholder="Phone"
                       value={form.phone}
-                      onChange={(v) => setForm((p) => ({ ...p, phone: v }))}
+                      onChange={(v: string) => setForm((p) => ({ ...p, phone: v }))}
                       disabled={saving}
                     />
                   </Field>
@@ -997,7 +1012,7 @@ export default function ProspectPage() {
                       compact
                       placeholder="City"
                       value={form.city}
-                      onChange={(v) => setForm((p) => ({ ...p, city: v }))}
+                      onChange={(v: string) => setForm((p) => ({ ...p, city: v }))}
                       disabled={saving}
                     />
                   </Field>
@@ -1038,39 +1053,39 @@ export default function ProspectPage() {
               <SubCard>
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9">
                   <Field label="Top 25">
-                    <YesNoCheckbox compact value={form.top25} onChange={(v) => setForm((p) => ({ ...p, top25: v }))} disabled={saving} />
+                    <YesNoCheckbox compact value={form.top25} onChange={(v: string) => setForm((p) => ({ ...p, top25: v }))} disabled={saving} />
                   </Field>
 
                   <Field label="Age 25+">
-                    <YesNoCheckbox compact value={form.age25plus} onChange={(v) => setForm((p) => ({ ...p, age25plus: v }))} disabled={saving} />
+                    <YesNoCheckbox compact value={form.age25plus} onChange={(v: string) => setForm((p) => ({ ...p, age25plus: v }))} disabled={saving} />
                   </Field>
 
                   <Field label="Married">
-                    <YesNoCheckbox compact value={form.married} onChange={(v) => setForm((p) => ({ ...p, married: v }))} disabled={saving} />
+                    <YesNoCheckbox compact value={form.married} onChange={(v: string) => setForm((p) => ({ ...p, married: v }))} disabled={saving} />
                   </Field>
 
                   <Field label="Children">
-                    <YesNoCheckbox compact value={form.children} onChange={(v) => setForm((p) => ({ ...p, children: v }))} disabled={saving} />
+                    <YesNoCheckbox compact value={form.children} onChange={(v: string) => setForm((p) => ({ ...p, children: v }))} disabled={saving} />
                   </Field>
 
                   <Field label="Homeowner">
-                    <YesNoCheckbox compact value={form.homeowner} onChange={(v) => setForm((p) => ({ ...p, homeowner: v }))} disabled={saving} />
+                    <YesNoCheckbox compact value={form.homeowner} onChange={(v: string) => setForm((p) => ({ ...p, homeowner: v }))} disabled={saving} />
                   </Field>
 
                   <Field label="Good Career">
-                    <YesNoCheckbox compact value={form.good_career} onChange={(v) => setForm((p) => ({ ...p, good_career: v }))} disabled={saving} />
+                    <YesNoCheckbox compact value={form.good_career} onChange={(v: string) => setForm((p) => ({ ...p, good_career: v }))} disabled={saving} />
                   </Field>
 
                   <Field label="Income 60K">
-                    <YesNoCheckbox compact value={form.income_60k} onChange={(v) => setForm((p) => ({ ...p, income_60k: v }))} disabled={saving} />
+                    <YesNoCheckbox compact value={form.income_60k} onChange={(v: string) => setForm((p) => ({ ...p, income_60k: v }))} disabled={saving} />
                   </Field>
 
                   <Field label="Dissatisfied">
-                    <YesNoCheckbox compact value={form.dissatisfied} onChange={(v) => setForm((p) => ({ ...p, dissatisfied: v }))} disabled={saving} />
+                    <YesNoCheckbox compact value={form.dissatisfied} onChange={(v: string) => setForm((p) => ({ ...p, dissatisfied: v }))} disabled={saving} />
                   </Field>
 
                   <Field label="Ambitious">
-                    <YesNoCheckbox compact value={form.ambitious} onChange={(v) => setForm((p) => ({ ...p, ambitious: v }))} disabled={saving} />
+                    <YesNoCheckbox compact value={form.ambitious} onChange={(v: string) => setForm((p) => ({ ...p, ambitious: v }))} disabled={saving} />
                   </Field>
                 </div>
               </SubCard>
@@ -1081,7 +1096,7 @@ export default function ProspectPage() {
                     <DateInput
                       compact
                       value={form.contact_date}
-                      onChange={(v) => setForm((p) => ({ ...p, contact_date: v }))}
+                      onChange={(v: string) => setForm((p) => ({ ...p, contact_date: v }))}
                       disabled={saving}
                     />
                   </Field>
@@ -1106,7 +1121,7 @@ export default function ProspectPage() {
                       compact
                       placeholder="Next Steps"
                       value={form.next_steps}
-                      onChange={(v) => setForm((p) => ({ ...p, next_steps: v }))}
+                      onChange={(v: string) => setForm((p) => ({ ...p, next_steps: v }))}
                       disabled={saving}
                     />
                   </Field>
@@ -1115,7 +1130,7 @@ export default function ProspectPage() {
 
               <SubCard>
                 <Field label="Comments">
-                  <CommentsEditor value={form.comments} onChange={(v) => setForm((p) => ({ ...p, comments: v }))} disabled={saving} />
+                  <CommentsEditor value={form.comments} onChange={(v: string) => setForm((p) => ({ ...p, comments: v }))} disabled={saving} />
                 </Field>
               </SubCard>
             </div>

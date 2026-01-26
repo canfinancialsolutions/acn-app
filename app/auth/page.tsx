@@ -24,7 +24,7 @@ function setAuthCookie() {
  */
 const DESTINATIONS = [
   { value: 'dashboard', label: 'Dashboard', path: '/dashboard' },
-  { value: 'fna', label: 'Financial Need Analysis', path: '/dashboard' }, // <-- changed from '/fna'
+  { value: 'fna', label: 'Financial Need Analysis', path: '/fna' },  
   { value: 'prospect', label: 'Prospect List', path: '/prospect' },
 ];
 

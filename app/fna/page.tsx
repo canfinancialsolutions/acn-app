@@ -1073,9 +1073,12 @@ export default function Page() {
         {/* 1. Choose Client */}
         <Card
           title="1. Choose Client 👨🏻‍💼"
+          left={  
+            <div className="text-sm text-slate-600">Select a client and complete all six sections of the FNA</div>
+                }
           right={
             <div className="text-xs text-slate-500">
-              <div className="text-sm text-slate-600">Select a client and complete all six sections of the FNA</div>
+            
                      {selectedClient && (
                     <div className="mt-2 text-sm text-slate-700">
                       <span className="font-semibold">Selected:</span> {selectedClientLabel}{" "}

@@ -423,7 +423,7 @@ export default function ProspectPage() {
     setLoading(true);
     setErrorMsg(null);
 
-    const { data, error } = await supabase.from('can_prospects').select('*').order('id', { ascending: false });
+    const { data, error } = await supabase.from('prospects').select('*').order('id', { ascending: false });
 
     if (error) {
       setToast('error', `Error loading prospects: ${error.message}`);
@@ -529,7 +529,7 @@ export default function ProspectPage() {
     setSaving(true);
     setErrorMsg(null);
 
-    const { error } = await supabase.from('can_prospects').insert([
+    const { error } = await supabase.from('prospects').insert([
       {
         first_name: form.first_name.trim(),
         last_name: toNull(form.last_name),
@@ -585,7 +585,7 @@ export default function ProspectPage() {
     setErrorMsg(null);
 
     const { error } = await supabase
-      .from('can_prospects')
+      .from('prospects')
       .update({
         first_name: form.first_name.trim(),
         last_name: toNull(form.last_name),

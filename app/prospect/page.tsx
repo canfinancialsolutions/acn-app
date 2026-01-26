@@ -2,6 +2,25 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+// Auth cookie utilities
+const AUTH_COOKIE = 'canfs_auth';
+
+function hasAuthCookie(): boolean {
+  if (typeof document === 'undefined') return false;
+  return document.cookie.split('; ').some((c) => c.startsWith(`${AUTH_COOKIE}=true`));
+}
+
+function clearAuthCookie(): void {
+  if (typeof document === 'undefined') return;
+  const secure =
+    typeof window !== 'undefined' && window.location?.protocol === 'https:' ? '; secure' : '';
+  document.cookie = `${AUTH_COOKIE}=; path=/; max-age=0; samesite=lax${secure}`;
+}
+
 import { createClient } from '@supabase/supabase-js';
  
 // Add to your dashboard page (top section)
@@ -11,7 +30,7 @@ import { createClient } from '@supabase/supabase-js';
     onClick={() => window.location.href = '/auth'}
     className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
   >
-    ← Exit
+    â† Exit
   </button>
 </div>
 
@@ -181,7 +200,7 @@ const normText = (s: string) =>
   s
     .trim()
     .toLowerCase()
-    .replace(/[‐‑‒–—―−]/g, '-');
+    .replace(/[â€â€‘â€’â€“â€”â€•âˆ’]/g, '-');
 
 const toNull = (s: string | null | undefined) => {
   const v = (s ?? '').trim();
@@ -467,6 +486,26 @@ const LogoutIcon = ({ className }: { className?: string }) => (
 );
 
 export default function ProspectListPage() {
+    const router = useRouter();
+
+  // Auth check on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      const cookieOk = hasAuthCookie();
+      if (!cookieOk) {
+        router.replace('/auth');
+        return;
+      }
+    };
+    checkAuth();
+  }, [router]);
+
+  // Logout function
+  const logout = () => {
+    clearAuthCookie();
+    window.location.href = '/auth';
+  };
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -882,7 +921,7 @@ export default function ProspectListPage() {
         <button
           type="button"
           className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm hover:bg-slate-50"
-          onClick={() => (window.location.href = '/auth')}
+          onClick={logout}
         >
           <LogoutIcon className="h-4 w-4" />
           Logout
@@ -945,7 +984,7 @@ export default function ProspectListPage() {
               onClick={handleTopAction}
               title={!canTopAction && !(showCard && mode === 'edit') ? 'Select a row to edit' : undefined}
             >
-              {saving && showCard && mode === 'edit' ? 'Saving…' : topActionLabel}
+              {saving && showCard && mode === 'edit' ? 'Savingâ€¦' : topActionLabel}
             </button>
 
             <button
@@ -996,7 +1035,7 @@ export default function ProspectListPage() {
                 {loading ? (
                   <tr>
                     <td colSpan={21} className="px-3 py-6 text-center text-slate-500">
-                      Loading…
+                      Loadingâ€¦
                     </td>
                   </tr>
                 ) : pageRows.length === 0 ? (
@@ -1084,7 +1123,7 @@ export default function ProspectListPage() {
                   onClick={handleBottomAction}
                   disabled={!canBottomAction}
                 >
-                  {saving && showCard ? 'Saving…' : bottomPrimaryLabel}
+                  {saving && showCard ? 'Savingâ€¦' : bottomPrimaryLabel}
                 </button>
 
                 {showCard && mode === 'new' && (
@@ -1114,7 +1153,7 @@ export default function ProspectListPage() {
                 <h2 className="text-lg font-bold text-slate-900">{mode === 'edit' ? 'Selected Prospect' : 'New Prospect'}</h2>
                 <p className="text-sm text-slate-600">
                   {mode === 'edit' && selected
-                    ? `Editing #${selected.id} — ${selected.first_name}${selected.last_name ? ' ' + selected.last_name : ''}`
+                    ? `Editing #${selected.id} â€” ${selected.first_name}${selected.last_name ? ' ' + selected.last_name : ''}`
                     : 'Enter details below, then use the button under the table to save.'}
                 </p>
               </div>

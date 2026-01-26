@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-  import { getSupabase } from "@/lib/supabaseClient";
+import { getSupabase } from "@/lib/supabaseClient";
 
 /**
  * Financial Needs Analysis (FNA) ” page.tsx
@@ -288,7 +288,6 @@ function Card({
     </div>
   );
 }
-
 function FormGrid({ children }: { children: React.ReactNode }) {
   return <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{children}</div>;
 }
@@ -1007,30 +1006,7 @@ function EditableTable({
 
   // ---------- Render helpers ----------
   const pageTitle = "Financial Needs Analysis";
- // ---------- added ----------
-   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="max-w-[1400px] mx-auto p-6 space-y-6">
-        {/* Header - Matching FNA page style */}
-        <div className="rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <img src="/can-logo.png" alt="CAN Financial Solutions" className="h-10 w-auto" />
-              <div>
-                <div className="text-3xl font-extrabold text-slate-900">Financial Needs Analysis</div>
-                <div className="text-slate-600 mt-1">Based on CAN Financial Solutions Prospect List</div>
-              </div>
-            </div>
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition-colors border bg-slate-900 hover:bg-slate-800 text-white border-slate-900"
-              onClick={logout}
-            >
-              ← Logout
-            </button>
-          </div>
-          
- // ---------- end ----------
+ 
   const canUseTabs = !!selectedClient && !!fnaHeader && !!fnaId;
 
   const selectedClientLabel = selectedClient

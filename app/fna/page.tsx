@@ -1056,7 +1056,7 @@ function EditableTable({
               )}
             </div> 
             <TopButton  onClick={logout}>
-              â† Logout
+               Logout
             </TopButton>
             
           </div>

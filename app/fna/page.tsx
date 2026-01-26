@@ -1071,20 +1071,21 @@ export default function Page() {
         </div>
         {/* 1. Choose Client */}
         <Card
-           <div>
+            <div className="text-xs text-slate-500">
               <div className="text-lg font-bold text-slate-900">1. Choose Client 👨🏻‍💼</div>
               <div className="text-sm font-normal text-slate-600 mt-1">Select a client and complete all six sections of the FNA</div>
              </div>
           right={
             <div className="text-xs text-slate-500">
-          {selectedClient && (
-                    <div className="mt-2 text-sm text-slate-700">
-                      <span className="font-semibold">Selected:</span> {selectedClientLabel}{" "}
-                      <span className="text-slate-500">({selectedClient.email})</span>
-                    </div>
-                    )}
-             </div>
-          } 
+                {selectedClient && (
+                          <div className="mt-2 text-sm text-slate-700">
+                            <span className="font-semibold">Selected:</span> {selectedClientLabel}{" "}
+                            <span className="text-slate-500">({selectedClient.email})</span>
+                          </div>
+                              )
+                }
+          </div>
+                } 
           >
             <div className="space-y-3">
             <input

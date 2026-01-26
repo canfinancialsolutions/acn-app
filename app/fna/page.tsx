@@ -1069,14 +1069,12 @@ export default function Page() {
             </div>
           )}
         </div>
-
         {/* 1. Choose Client */}
         <Card
            <div>
               <div className="text-lg font-bold text-slate-900">1. Choose Client 👨🏻‍💼</div>
               <div className="text-sm font-normal text-slate-600 mt-1">Select a client and complete all six sections of the FNA</div>
-            
-          
+             </div>
           right={
             <div className="text-xs text-slate-500">
           {selectedClient && (
@@ -1086,8 +1084,8 @@ export default function Page() {
                     </div>
                     )}
              </div>
-          } </div>
-        >
+          } 
+          >
             <div className="space-y-3">
             <input
               className="w-full max-w-[420px] rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-400"

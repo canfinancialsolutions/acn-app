@@ -692,7 +692,7 @@ export default function ProspectPage() {
             <div className="flex items-center gap-3">
               <img src="/can-logo.png" alt="CAN Financial Solutions" className="h-10 w-auto" />
               <div>
-                <div className="text-3xl font-extrabold text-slate-900">Prospect List Tracking</div>
+                <div className="text-3xl font-bold text-slate-900">Prospect List Tracking</div>
                 <div className="text-slate-600 mt-1">Based on CAN Financial Solutions Prospect List</div>
               </div>
             </div>

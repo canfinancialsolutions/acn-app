@@ -1,3 +1,4 @@
+// app/fna/page.tsx
 "use client";
 
 export const dynamic = "force-dynamic";
@@ -1093,12 +1094,34 @@ export default function Page() {
           }
         >
           <div className="space-y-3">
-            <input
-              className="w-full max-w-[420px] rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-400"
-              placeholder="Search by name or phone..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <div className="flex gap-2 items-center">
+              <input
+                className="w-full max-w-[420px] rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-400"
+                placeholder="Search by name or phone..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch("");
+                  setSelectedClient(null);
+                  setActiveTab("client_family");
+                  setFnaHeader(null);
+                  setFnaId(null);
+                  setChildrenRows([]);
+                  setPropertyRows([]);
+                  setAssetRows([]);
+                  setLiabilityRows([]);
+                  setInsuranceRows([]);
+                  setIncomeRows([]);
+                  setTaxRefundRow(null);
+                }}
+                className="inline-flex items-center justify-center rounded-lg px-4 py-3 text-sm font-semibold transition-colors border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 whitespace-nowrap"
+              >
+                Refresh
+              </button>
+            </div>
             <div className="overflow-auto rounded-lg border border-slate-300">
               <table className="w-full text-sm min-w-[760px]" style={{ borderCollapse: 'collapse' }}>
                 <thead className="bg-slate-50">
@@ -1128,7 +1151,7 @@ export default function Page() {
                       return (
                         <tr
                           key={c.id}
-                          className={`cursor-pointer ${isSelected ? "bg-blue-50" : "hover:bg-slate-50"}`}
+                          className={`cursor-pointer ${isSelected ? "bg-emerald-50" : "hover:bg-slate-50"}`}
                           onClick={() => loadFnaForClient(c)}
                         >
                           <td className="px-4 py-3 border border-slate-300 font-semibold text-slate-900">

@@ -927,7 +927,7 @@ export default function ProspectPage() {
                 <h2 className="text-lg font-bold text-slate-900">{mode === 'edit' ? 'Selected Prospect🧑🏻‍🤝‍🧑🏻' : 'New Prospect🧑🏻‍🤝‍🧑🏻'}</h2>
                 <p className="text-sm text-slate-600">
                   {mode === 'edit' && selected
-                    ? `Editing #${selected.id} ${selected.first_name}${selected.last_name ? ' ' + selected.last_name : ''}`
+                    ? `Editing✍🏻: #${selected.id} ${selected.first_name}${selected.last_name ? ' ' + selected.last_name : ''}`
                     : 'Enter details below, then use the button under the table to save.'}
                 </p>
               </div>

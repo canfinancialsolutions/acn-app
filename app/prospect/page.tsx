@@ -508,6 +508,24 @@ export default function ProspectPage() {
     setActiveId(p.id);
   };
 
+  const handleShowProspect = () => {
+    if (saving) return;
+    if (!activeId) {
+      setToast('error', 'Select a row first.');
+      return;
+    }
+    const p = prospects.find((x) => x.id === activeId);
+    if (!p) {
+      setToast('error', 'Row not found.');
+      return;
+    }
+
+    setOriginal(p);
+    setForm(toProspectForm(p));
+    setMode('edit');
+    setShowCard(true);
+  };
+
   const handleTopAction = async () => {
     if (saving) return;
 
@@ -767,19 +785,15 @@ export default function ProspectPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                {/* Top-of-table action: Edit Prospect (or Save in edit mode) */}
+                {/* Show button - always visible, displays selected prospect */}
                 <button
                   type="button"
-                  className={`inline-flex h-10 items-center justify-center rounded-lg px-4 text-sm font-semibold ${
-                    showCard && mode === 'edit'
-                      ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                      : 'border border-slate-200 bg-white text-slate-900 hover:bg-slate-50'
-                  } ${!canTopAction ? 'opacity-60' : ''}`}
-                  disabled={!canTopAction}
-                  onClick={handleTopAction}
-                  title={!canTopAction && !(showCard && mode === 'edit') ? 'Select a row to edit' : undefined}
+                  className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 hover:bg-slate-50 disabled:opacity-60"
+                  disabled={!activeId || saving}
+                  onClick={handleShowProspect}
+                  title={!activeId ? 'Select a row to view' : undefined}
                 >
-                  {saving && showCard && mode === 'edit' ? 'Saving...' : topActionLabel}
+                  Show
                 </button>
 
                 <button
@@ -946,14 +960,27 @@ export default function ProspectPage() {
               </div>
 
               {mode === 'edit' && (
-                <button
-                  type="button"
-                  className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 hover:bg-slate-50 disabled:opacity-50"
-                  onClick={handleCloseEdit}
-                  disabled={saving}
-                >
-                  Close
-                </button>
+                <div className="flex gap-2">
+                  {/* Save button - only shows when data is edited (dirty) */}
+                  {dirty && (
+                    <button
+                      type="button"
+                      className="inline-flex h-10 items-center justify-center rounded-lg bg-emerald-600 px-4 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                      onClick={saveEdit}
+                      disabled={saving || !requiredFilled}
+                    >
+                      {saving ? 'Saving...' : 'Save'}
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 hover:bg-slate-50 disabled:opacity-50"
+                    onClick={handleCloseEdit}
+                    disabled={saving}
+                  >
+                    Close
+                  </button>
+                </div>
               )}
             </div>
 

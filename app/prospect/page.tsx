@@ -788,7 +788,6 @@ export default function ProspectPage() {
                 <table className="min-w-[1200px] w-full text-sm">
                   <thead className="bg-slate-100 text-slate-700">
                     <tr className="[&>th]:whitespace-nowrap [&>th]:px-3 [&>th]:py-2 [&>th]:text-left [&>th]:font-semibold">
-                      <th>#</th>
                       <th>First Name</th>
                       <th>Last Name</th>
                       <th>Spouse Name</th>
@@ -835,7 +834,6 @@ export default function ProspectPage() {
                               isActive ? 'bg-emerald-50' : 'hover:bg-slate-50'
                             } [&>td]:px-3 [&>td]:py-2 [&>td]:text-xs [&>td]:text-slate-700`}
                           >
-                            <td className="font-mono text-slate-500">{p.id}</td>
                             <td className="font-semibold text-slate-900">{p.first_name}</td>
                             <td>{p.last_name}</td>
                             <td>{p.spouse_name}</td>
@@ -927,7 +925,7 @@ export default function ProspectPage() {
                 <h2 className="text-lg font-bold text-slate-900">{mode === 'edit' ? 'Selected Prospect🧑🏻‍🤝‍🧑🏻' : 'New Prospect🧑🏻‍🤝‍🧑🏻'}</h2>
                 <p className="text-sm text-slate-600">
                   {mode === 'edit' && selected
-                    ? `Editing #${selected.id} ${selected.first_name}${selected.last_name ? ' ' + selected.last_name : ''}`
+                    ? `Editing ${selected.first_name}${selected.last_name ? ' ' + selected.last_name : ''}`
                     : 'Enter details below, then use the button under the table to save.'}
                 </p>
               </div>

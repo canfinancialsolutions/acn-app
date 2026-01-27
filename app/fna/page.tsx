@@ -274,7 +274,7 @@ function Card({
   children,
   right,
 }: {
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
   right?: React.ReactNode;
 }) {

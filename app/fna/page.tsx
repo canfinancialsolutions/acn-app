@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
  * Financial Needs Analysis (FNA) — page.tsx
  *
  * Fixes included:
- * 1) Client search now queries public.client_registrations (via supabase.from("client_registrations"))
+ * 1) Client search now queries public.client_registrations (via supabase().from("client_registrations"))
  *    using first_name / last_name / phone (ILIKE) and displays First, Last, Phone, Email.
  * 2) Selecting a client loads/creates an fna_header row, then fetches each tab’s data from the
  *    appropriate fna_* tables using fna_id.
@@ -106,7 +106,6 @@ const TAB_LABELS: Record<TabKey, string> = {
   insurance: "Insurance",
   income_estate: "Income & Estate",
 };
- const router = useRouter(); 
 const US_STATES = [
   "",
   "Alabama",
@@ -548,10 +547,13 @@ function EditableTable({
 }
 
  export default function Page() {
- const supabaseRef = useRef<ReturnType<typeof getSupabase> | null>(null);
-  if (!supabaseRef.current) supabaseRef.current = getSupabase();
-      const supabase = supabaseRef.current;
-
+  const router = useRouter();
+  const supabaseRef = useRef<ReturnType<typeof getSupabase> | null>(null);
+  // Lazily create Supabase client on first use (avoids build/prerender issues)
+  const supabase = () => {
+    if (!supabaseRef.current) supabaseRef.current = getSupabase();
+    return supabaseRef.current!;
+  };
   const [authChecked, setAuthChecked] = useState(false);
 
   // Client search
@@ -584,7 +586,7 @@ function EditableTable({
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await supabase.auth.getSession();
+        const { data } = await supabase().auth.getSession();
         if (!data.session) {
           window.location.href = "/auth";
           return;
@@ -600,7 +602,7 @@ function EditableTable({
 
   async function logout() {
     try {
-      await supabase.auth.signOut();
+      await supabase().auth.signOut();
     } finally {
       window.location.href = "/auth";
     }
@@ -623,8 +625,7 @@ function EditableTable({
     setClientLoading(true);
     try {
       const needle = sanitizeSearchTerm(term);
-      let q = supabase
-        .from("client_registrations")
+      let q = supabase().from("client_registrations")
         .select("id, first_name, last_name, phone, email")
         .order("created_at", { ascending: false })
         .limit(50);
@@ -649,8 +650,7 @@ function EditableTable({
 
   // ---------- FNA load ----------
   async function ensureHeaderForClient(clientId: UUID): Promise<FnaHeader> {
-    const { data: existing, error: e1 } = await supabase
-      .from("fna_header")
+    const { data: existing, error: e1 } = await supabase().from("fna_header")
       .select("*")
       .eq("client_id", clientId)
       .order("updated_at", { ascending: false })
@@ -662,8 +662,7 @@ function EditableTable({
       return existing[0] as FnaHeader;
     }
 
-    const { data: inserted, error: e2 } = await supabase
-      .from("fna_header")
+    const { data: inserted, error: e2 } = await supabase().from("fna_header")
       .insert({ client_id: clientId })
       .select("*")
       .limit(1);
@@ -708,13 +707,13 @@ function EditableTable({
         incomes,
         taxRefund,
       ] = await Promise.all([
-        supabase.from("fna_children").select("*").eq("fna_id", fna_id).order("child_name", { ascending: true }),
-        supabase.from("fna_properties").select("*").eq("fna_id", fna_id).order("address", { ascending: true }),
-        supabase.from("fna_assets").select("*").eq("fna_id", fna_id).order("asset_name", { ascending: true }),
-        supabase.from("fna_liabilities").select("*").eq("fna_id", fna_id).order("liability_type", { ascending: true }),
-        supabase.from("fna_insurance").select("*").eq("fna_id", fna_id).order("insured_role", { ascending: true }),
-        supabase.from("fna_income").select("*").eq("fna_id", fna_id).order("fna_income_role", { ascending: true }),
-        supabase.from("fna_tax_refund").select("*").eq("fna_id", fna_id).limit(1),
+        supabase().from("fna_children").select("*").eq("fna_id", fna_id).order("child_name", { ascending: true }),
+        supabase().from("fna_properties").select("*").eq("fna_id", fna_id).order("address", { ascending: true }),
+        supabase().from("fna_assets").select("*").eq("fna_id", fna_id).order("asset_name", { ascending: true }),
+        supabase().from("fna_liabilities").select("*").eq("fna_id", fna_id).order("liability_type", { ascending: true }),
+        supabase().from("fna_insurance").select("*").eq("fna_id", fna_id).order("insured_role", { ascending: true }),
+        supabase().from("fna_income").select("*").eq("fna_id", fna_id).order("fna_income_role", { ascending: true }),
+        supabase().from("fna_tax_refund").select("*").eq("fna_id", fna_id).limit(1),
       ]);
 
       for (const r of [children, props, assets, liabilities, insurance, incomes, taxRefund]) {
@@ -774,8 +773,7 @@ function EditableTable({
       }
       cleaned.updated_at = payload.updated_at;
 
-      const { data, error: uErr } = await supabase
-        .from("fna_header")
+      const { data, error: uErr } = await supabase().from("fna_header")
         .update(cleaned)
         .eq("id", fnaHeader.id)
         .select("*")
@@ -816,11 +814,11 @@ function EditableTable({
     }
 
     if (isTmp) {
-      const { data, error } = await supabase.from(table).insert(payload).select("*").limit(1);
+      const { data, error } = await supabase().from(table).insert(payload).select("*").limit(1);
       if (error) throw error;
       return (data ?? [])[0] as RowBase | undefined;
     } else {
-      const { data, error } = await supabase.from(table).update(payload).eq("id", row.id).select("*").limit(1);
+      const { data, error } = await supabase().from(table).update(payload).eq("id", row.id).select("*").limit(1);
       if (error) throw error;
       return (data ?? [])[0] as RowBase | undefined;
     }
@@ -829,7 +827,7 @@ function EditableTable({
   async function deleteRow(table: string, row: RowBase) {
     const isTmp = String(row.id).startsWith("tmp_");
     if (isTmp) return; // only local
-    const { error } = await supabase.from(table).delete().eq("id", row.id);
+    const { error } = await supabase().from(table).delete().eq("id", row.id);
     if (error) throw error;
   }
 
@@ -1533,7 +1531,7 @@ function EditableTable({
         <div className="text-xs text-slate-500">
           Note: If you still see “No clients found” but you know data exists, verify Supabase RLS policies for
           <span className="font-semibold"> client_registrations</span> and the <span className="font-semibold">fna_* tables</span>.
-          This page uses direct <span className="font-mono">supabase.from("...")</span> reads/writes.
+          This page uses direct <span className="font-mono">supabase().from("...")</span> reads/writes.
         </div>
       </div>
     </div>

@@ -419,6 +419,18 @@ export default function ProspectPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Ensure form is updated when entering edit mode with a selected prospect
+  useEffect(() => {
+    if (mode === 'edit' && activeId && showCard) {
+      const p = prospects.find((x) => x.id === activeId);
+      if (p && JSON.stringify(toProspectForm(p)) !== JSON.stringify(form)) {
+        setForm(toProspectForm(p));
+        setOriginal(p);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, activeId, showCard, prospects]);
+
   const loadProspects = async () => {
     setLoading(true);
     setErrorMsg(null);

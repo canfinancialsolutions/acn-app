@@ -1091,6 +1091,11 @@ export default function Page() {
               </div>
             </div>
           }
+         left={
+            <div className="text-xs text-slate-600">
+              <div className="text-slate-500 mt-1"> 👇 Select a client and complete all six sections of the FNA</div>
+            </div>
+          }
         >
           <div className="space-y-3">
             <div className="flex gap-2 items-center">
@@ -1100,9 +1105,6 @@ export default function Page() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-               <br>
-                 <div className="font-normal"> 👇 Select a client and complete all six sections of the FNA</div>
-                </br>
               <button
                 type="button"
                 onClick={() => {

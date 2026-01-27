@@ -1075,13 +1075,13 @@ export default function Page() {
           title={
             <div>
               <div className="text-lg font-bold text-slate-900">1. Choose Client 👨🏻‍💼</div>
-              <div className="text-sm font-normal text-slate-600 mt-1">Select a client and complete all six sections of the FNA</div>
-            </div>
+               <span className="font-semibold">Selected:</span> {selectedClientLabel}{" "}
+               <span className="text-slate-500">({selectedClient.email})</span>
+             </div>
           }
           right={
             <div className="text-xs text-slate-500">
-                <span className="font-semibold">Selected:</span> {selectedClientLabel}{" "}
-                <span className="text-slate-500">({selectedClient.email})</span>
+            <div className="text-sm font-normal text-slate-600 mt-1">Select a client and complete all six sections of the FNA</div>  
               {clientLoading ? "Searching¦" : `${clientRows.length} result(s)`}
             </div>
           }

@@ -43,7 +43,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
         <div className="flex flex-col items-center mb-6">
-          <img src="/CAN_TTN.png" alt="CAN Care & Advancement Network" className="h-14 mb-3" />
+          <img src="/can-logo.png" alt="CAN Care & Advancement Network" className="h-14 mb-3" />
           <h1 className="text-2xl font-bold text-slate-900 mb-1">Admin Login</h1>
           <p className="text-sm text-slate-600">Caring today, advancing tomorrow</p>
         </div>

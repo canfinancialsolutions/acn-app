@@ -52,8 +52,9 @@ export default function LoginPage() {
           <h2 className="text-xl font-bold text-blue-800 mb-1">CAN Care & Advancement Network</h2>
           <p className="text-sm font-semibold text-yellow-500 mb-3">Caring today, advancing tomorrow</p>
           <h1 className="text-2xl font-bold text-slate-900">Admin Login</h1>
-        </div>
-        </div>
+           </div>
+              </div>
+                 </div>
         {error && (
           <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
             {error}

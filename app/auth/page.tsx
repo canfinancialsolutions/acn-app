@@ -49,7 +49,7 @@ export default function LoginPage() {
                 style={{ maxHeight: '96px' }}
               />
 <div className="text-center mb-6">
-  <h2 className="text-xl text-[#1E5AA8]mb-0 leading-none"><b>Advancement & Care Network</b></h2>
+  <h2 className="text-xl text-[#1E5AA8] mb-0 leading-none"><b>Advancement & Care Network</b></h2>
   <p className="text-sm text-[#FFD700] mb-0 mt-1 leading-none"><b>Advancing Careers, Caring for Families</b></p>
   <h1 className="text-2xl font-semibold text-slate-900 mt-2">Admin Login</h1>
 </div>

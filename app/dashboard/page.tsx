@@ -271,10 +271,10 @@ const IMMIGRATION_STATUS_OPTIONS: string[] = [
   "F-1 OPT", "F-1 STEM OPT", "H-4 EAD", "E-3", "I-485 Pending", "I-485 EAD/AP", "Other Visa Status", 
 ]; 
 const STATUS_OPTIONS: Record<string, string[]> = { 
-  status: ["", "Prospect Client", "New Client",  "Existing Client", "Referral Client", "Initiated", "Not-Interested", "In-Progress", "On-Hold", "Closed", "Completed"], 
+  status: ["", "Successful Client", "Prospect Client", "New Client",  "Existing Client", "Referral Client", "Initiated", "Not-Interested", "In-Progress", "On-Hold", "Closed", "Completed"], 
   followup_status: ["", "Open", "In-Progress", "Follow-Up", "Follow-Up 2", "On Hold", "Completed"], 
   "follow-up_status": ["", "Open", "In-Progress", "Follow-Up", "Follow-Up 2", "On Hold", "Completed"], 
-  client_status: ["", "New Client", "Initiated", "Interested", "Not-Interested", "In-Progress", "Closed", "On Hold", "Purchased", "Re-Opened", "Completed"],
+  client_status: ["", "Policy Issued", "New Client", "Initiated", "Interested", "Not-Interested", "In-Progress", "Closed", "On Hold", "Purchased", "Re-Opened", "Completed"],
   bop_status: ["", "Presented", "Business", "Client", "In-Progress", "On-Hold", "Clarification", "Not Interested", "Completed", "Closed"], 
   state: US_STATE_OPTIONS, 
   immigration_status: IMMIGRATION_STATUS_OPTIONS, 

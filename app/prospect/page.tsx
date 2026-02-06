@@ -544,8 +544,17 @@ export default function ProspectPage() {
     }
 
     // NEW: Apply sorting
-    if (sortConfig.key) {
-      arr.sort((a, b) => {
+    // First, prioritize records where Dissatisfied=Yes AND Ambitious=Yes
+    arr.sort((a, b) => {
+      const aIsProspect = (a.dissatisfied === 'Yes' || a.dissatisfied === 'Y') && (a.ambitious === 'Yes' || a.ambitious === 'Y');
+      const bIsProspect = (b.dissatisfied === 'Yes' || b.dissatisfied === 'Y') && (b.ambitious === 'Yes' || b.ambitious === 'Y');
+      
+      // If one is prospect and other is not, prospect comes first
+      if (aIsProspect && !bIsProspect) return -1;
+      if (!aIsProspect && bIsProspect) return 1;
+      
+      // If both are prospects or both are not, apply regular sorting
+      if (sortConfig.key) {
         const aVal = a[sortConfig.key!];
         const bVal = b[sortConfig.key!];
         
@@ -566,11 +575,11 @@ export default function ProspectPage() {
         // Default string comparison
         const comparison = String(aVal).localeCompare(String(bVal));
         return sortConfig.direction === 'asc' ? comparison : -comparison;
-      });
-    } else {
-      // Default: Sort by ID descending (newest first)
-      arr.sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
-    }
+      } else {
+        // Default: Sort by ID descending (newest first)
+        return (b.id ?? 0) - (a.id ?? 0);
+      }
+    });
 
     return arr;
   }, [prospects, search, resultFilter, sortConfig]);
@@ -958,13 +967,32 @@ export default function ProspectPage() {
                     ) : (
                       pageRows.map((p) => {
                         const isActive = p.id === activeId;
+                        const isProspect = (p.dissatisfied === 'Yes' || p.dissatisfied === 'Y') && (p.ambitious === 'Yes' || p.ambitious === 'Y');
+                        const isClosed = p.next_steps === 'Closed';
+                        
+                        // Determine background color: Prospect > Closed > Active
+                        let bgClass = '';
+                        let cursorClass = 'cursor-pointer';
+                        let titleText = '';
+                        
+                        if (isProspect) {
+                          bgClass = 'bg-green-100';
+                          cursorClass = 'cursor-help';
+                          titleText = 'Prospect Client 🏆';
+                        } else if (isClosed) {
+                          bgClass = 'bg-gray-300';
+                        } else if (isActive) {
+                          bgClass = 'bg-emerald-50';
+                        } else {
+                          bgClass = 'hover:bg-slate-50';
+                        }
+                        
                         return (
                           <tr
                             key={p.id}
                             onClick={() => handleSelectRow(p)}
-                            className={`cursor-pointer ${
-                              isActive ? 'bg-emerald-50' : 'hover:bg-slate-50'
-                            }`}
+                            className={`${cursorClass} ${bgClass}`}
+                            title={titleText}
                           >
                             <td className="border border-slate-300 px-2 py-2 text-xs text-slate-900 font-semibold truncate" style={{ width: `${columnWidths['first_name']}px` }}>{p.first_name}</td>
                             <td className="border border-slate-300 px-2 py-2 text-xs text-slate-700 truncate" style={{ width: `${columnWidths['last_name']}px` }}>{p.last_name}</td>

@@ -526,12 +526,22 @@ export default function ProspectPage() {
     // Filter by text search
     if (search.trim()) {
       const norm = normText(search);
+      const searchDigits = search.replace(/\D/g, ''); // Extract only digits from search
+      
       arr = arr.filter((p) => {
         const fname = normText(p.first_name ?? '');
         const lname = normText(p.last_name ?? '');
         const spouse = normText(p.spouse_name ?? '');
         const phone = normText(p.phone ?? '');
-        return fname.includes(norm) || lname.includes(norm) || spouse.includes(norm) || phone.includes(norm);
+        const phoneDigits = (p.phone ?? '').replace(/\D/g, ''); // Extract only digits from phone
+        
+        // Check text fields normally
+        const textMatch = fname.includes(norm) || lname.includes(norm) || spouse.includes(norm) || phone.includes(norm);
+        
+        // Check phone digits if search contains digits
+        const phoneMatch = searchDigits.length > 0 && phoneDigits.includes(searchDigits);
+        
+        return textMatch || phoneMatch;
       });
     }
 
@@ -545,15 +555,22 @@ export default function ProspectPage() {
 
     // NEW: Apply sorting
     // First, prioritize records where Dissatisfied=Yes AND Ambitious=Yes
+    // Then, put Closed records at the bottom
     arr.sort((a, b) => {
       const aIsProspect = (a.dissatisfied === 'Yes' || a.dissatisfied === 'Y') && (a.ambitious === 'Yes' || a.ambitious === 'Y');
       const bIsProspect = (b.dissatisfied === 'Yes' || b.dissatisfied === 'Y') && (b.ambitious === 'Yes' || b.ambitious === 'Y');
+      const aIsClosed = a.next_steps === 'Closed';
+      const bIsClosed = b.next_steps === 'Closed';
       
-      // If one is prospect and other is not, prospect comes first
+      // Prospect clients come first
       if (aIsProspect && !bIsProspect) return -1;
       if (!aIsProspect && bIsProspect) return 1;
       
-      // If both are prospects or both are not, apply regular sorting
+      // Closed records come last
+      if (aIsClosed && !bIsClosed) return 1;
+      if (!aIsClosed && bIsClosed) return -1;
+      
+      // If both are same priority (both prospects, both closed, or both normal), apply regular sorting
       if (sortConfig.key) {
         const aVal = a[sortConfig.key!];
         const bVal = b[sortConfig.key!];
@@ -919,36 +936,45 @@ export default function ProspectPage() {
                 </button>
 
                 <div className="text-sm text-slate-500">
-                  Showing {filtered.length} of {prospects.length} {filtered.length === 1 ? 'prospect' : 'prospects'}
+                  Showing {pageRows.length} of {filtered.length} {filtered.length === 1 ? 'prospect' : 'prospects'}
                 </div>
               </div>
             </div>
 
             {/* Table with Excel-like features */}
             <div className="rounded-xl border border-slate-300 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="min-w-full w-full text-sm border-collapse" style={{ tableLayout: 'fixed' }}>
+              <div className="overflow-x-auto relative">
+                <table className="min-w-full w-full text-sm" style={{ tableLayout: 'fixed', borderCollapse: 'collapse' }}>
                   <thead className="bg-slate-100 text-slate-700">
                     <tr>
-                      {COLUMNS.map((col) => (
-                        <th
-                          key={col.key}
-                          className="border border-slate-300 px-2 py-2 text-left font-semibold cursor-pointer hover:bg-slate-200 relative select-none"
-                          style={{ width: `${columnWidths[col.key]}px`, minWidth: `${columnWidths[col.key]}px` }}
-                          onClick={() => handleSort(col.key as keyof Prospect)}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="truncate">{col.label}</span>
-                            <SortIndicator columnKey={col.key} />
-                          </div>
-                          {/* Resize handle */}
-                          <div
-                            className="absolute top-0 right-0 bottom-0 w-1 cursor-col-resize hover:bg-blue-500 bg-slate-400"
-                            onMouseDown={(e) => startResize(e, col.key)}
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                        </th>
-                      ))}
+                      {COLUMNS.map((col, idx) => {
+                        const isSticky = idx < 3; // First 3 columns are sticky
+                        const leftOffset = idx === 0 ? 0 : idx === 1 ? columnWidths['first_name'] : idx === 2 ? columnWidths['first_name'] + columnWidths['last_name'] : 0;
+                        
+                        return (
+                          <th
+                            key={col.key}
+                            className={`border border-slate-300 px-2 py-2 text-left font-semibold cursor-pointer hover:bg-slate-200 relative select-none ${isSticky ? 'sticky bg-slate-100 z-10' : ''}`}
+                            style={{ 
+                              width: `${columnWidths[col.key]}px`, 
+                              minWidth: `${columnWidths[col.key]}px`,
+                              ...(isSticky ? { left: `${leftOffset}px` } : {})
+                            }}
+                            onClick={() => handleSort(col.key as keyof Prospect)}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="truncate">{col.label}</span>
+                              <SortIndicator columnKey={col.key} />
+                            </div>
+                            {/* Resize handle */}
+                            <div
+                              className="absolute top-0 right-0 bottom-0 w-1 cursor-col-resize hover:bg-blue-500 bg-slate-400"
+                              onMouseDown={(e) => startResize(e, col.key)}
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </th>
+                        );
+                      })}
                     </tr>
                   </thead>
                   <tbody>
@@ -981,6 +1007,7 @@ export default function ProspectPage() {
                           titleText = 'Prospect Client 🏆';
                         } else if (isClosed) {
                           bgClass = 'bg-gray-300';
+                          titleText = 'Prospect Closed';
                         } else if (isActive) {
                           bgClass = 'bg-emerald-50';
                         } else {
@@ -994,9 +1021,9 @@ export default function ProspectPage() {
                             className={`${cursorClass} ${bgClass}`}
                             title={titleText}
                           >
-                            <td className="border border-slate-300 px-2 py-2 text-xs text-slate-900 font-semibold truncate" style={{ width: `${columnWidths['first_name']}px` }}>{p.first_name}</td>
-                            <td className="border border-slate-300 px-2 py-2 text-xs text-slate-700 truncate" style={{ width: `${columnWidths['last_name']}px` }}>{p.last_name}</td>
-                            <td className="border border-slate-300 px-2 py-2 text-xs text-slate-700 truncate" style={{ width: `${columnWidths['spouse_name']}px` }}>{p.spouse_name}</td>
+                            <td className={`border border-slate-300 px-2 py-2 text-xs text-slate-900 font-semibold truncate sticky left-0 z-10 ${bgClass}`} style={{ width: `${columnWidths['first_name']}px` }}>{p.first_name}</td>
+                            <td className={`border border-slate-300 px-2 py-2 text-xs text-slate-700 truncate sticky z-10 ${bgClass}`} style={{ width: `${columnWidths['last_name']}px`, left: `${columnWidths['first_name']}px` }}>{p.last_name}</td>
+                            <td className={`border border-slate-300 px-2 py-2 text-xs text-slate-700 truncate sticky z-10 ${bgClass}`} style={{ width: `${columnWidths['spouse_name']}px`, left: `${columnWidths['first_name'] + columnWidths['last_name']}px` }}>{p.spouse_name}</td>
                             <td className="border border-slate-300 px-2 py-2 text-xs text-slate-700 truncate" style={{ width: `${columnWidths['relation_type']}px` }}>{p.relation_type}</td>
                             <td className="border border-slate-300 px-2 py-2 text-xs text-slate-700 truncate" style={{ width: `${columnWidths['phone']}px` }}>{p.phone}</td>
                             <td className="border border-slate-300 px-2 py-2 text-xs text-slate-700 truncate" style={{ width: `${columnWidths['city']}px` }}>{p.city}</td>
@@ -1025,25 +1052,27 @@ export default function ProspectPage() {
 
             {/* Pagination */}
             <div className="flex items-center justify-between">
-              <button
-                type="button"
-                className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 disabled:opacity-50"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={safePage === 1 || saving}
-              >
-                Previous
-              </button>
               <div className="text-sm text-slate-600">
                 Page {safePage} of {totalPages}
               </div>
-              <button
-                type="button"
-                className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 disabled:opacity-50"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={safePage === totalPages || saving}
-              >
-                Next
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 disabled:opacity-50"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={safePage === 1 || saving}
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 disabled:opacity-50"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={safePage === totalPages || saving}
+                >
+                  Next
+                </button>
+              </div>
             </div>
 
             {/* Actions */}

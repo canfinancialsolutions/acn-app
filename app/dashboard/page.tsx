@@ -709,7 +709,6 @@ export default function Dashboard() {
           </div> 
           <div className="flex items-center gap-2"> 
   {(() => {
-    const successfulClientsCount = records.filter(r => r.status === "Successful Client").length;
     const newClientsCount = records.filter(r => r.status === "New Client").length;
     const latestIssuedDate = records.map(r => r.Issued).filter(Boolean).map(d => new Date(d)).sort((a,b)=>b.getTime()-a.getTime())[0];
      
@@ -722,9 +721,6 @@ export default function Dashboard() {
     const meetingTomorrowCount = records.filter(r => r.BOP_Date?.startsWith(today+1) || r.Followup_Date?.startsWith(today+1)).length;
      
     return (<div className="flex gap-2 mr-4">
-    <div className="px-3 py-1 bg-gray-200 text-xs font-semibold rounded text-center">
-      Sucessful Client👍{successfulClientsCount}
-    </div>
     <div className="px-3 py-1 bg-gray-200 text-xs font-semibold rounded text-center">
       New Clients✏️{newClientsCount}
     </div>
@@ -876,12 +872,12 @@ export default function Dashboard() {
           <div className="text-sm text-black mb-2">{total.toLocaleString()} records • showing {ALL_PAGE_SIZE} per page</div> 
    
 <div className="flex gap-4 mb-2 text-xs font-semibold text-black">
-  <div className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-[#B1FB17] rounded"></span>New Client</div>
-  <div className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-[#728FCE] rounded"></span>Interested</div>
-  <div className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-[#ADDFFF] rounded"></span>In-Progress</div>
-  <div className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-[#C9BE62] rounded"></span>On Hold</div>
-  <div className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-[#E6BF83] rounded"></span>Closed</div>
-  <div className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-[#3CB371] rounded"></span>Completed</div>
+  <div className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-[#B1FB17] rounded"></span>New Client {records.filter(r => r.client_status === "New Client").length}</div>
+  <div className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-[#728FCE] rounded"></span>Interested {records.filter(r => r.client_status === "Interested").length}</div>
+  <div className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-[#ADDFFF] rounded"></span>In-Progress {records.filter(r => r.client_status === "In-Progress").length}</div>
+  <div className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-[#C9BE62] rounded"></span>On Hold {records.filter(r => r.client_status === "On Hold").length}</div>
+  <div className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-[#E6BF83] rounded"></span>Closed {records.filter(r => r.client_status === "Closed").length}</div>
+  <div className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-[#3CB371] rounded"></span>Completed {records.filter(r => r.client_status === "Completed").length}</div>
 </div>
 
 {recordsVisible && ( 

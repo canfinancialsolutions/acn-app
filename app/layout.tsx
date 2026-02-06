@@ -2,8 +2,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "CAN Reports",
-  description: "CAN Financial Solutions - Client Registration Reports",
+  title: "ACN Reports",
+  description: "ACN Advancement & Care Network",
 };
 
 export default function RootLayout({

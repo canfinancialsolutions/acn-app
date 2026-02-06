@@ -709,6 +709,7 @@ export default function Dashboard() {
           </div> 
           <div className="flex items-center gap-2"> 
   {(() => {
+    const successfulClientsCount = records.filter(r => r.status === "Sucessful Client").length;
     const newClientsCount = records.filter(r => r.status === "New Client").length;
     const latestIssuedDate = records.map(r => r.Issued).filter(Boolean).map(d => new Date(d)).sort((a,b)=>b.getTime()-a.getTime())[0];
      
@@ -721,6 +722,9 @@ export default function Dashboard() {
     const meetingTomorrowCount = records.filter(r => r.BOP_Date?.startsWith(today+1) || r.Followup_Date?.startsWith(today+1)).length;
      
     return (<div className="flex gap-2 mr-4">
+    <div className="px-3 py-1 bg-gray-200 text-xs font-semibold rounded text-center">
+      Sucessful Client👍{successfulClientsCount}
+    </div>
     <div className="px-3 py-1 bg-gray-200 text-xs font-semibold rounded text-center">
       New Clients✏️{newClientsCount}
     </div>

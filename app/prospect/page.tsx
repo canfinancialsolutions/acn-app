@@ -687,7 +687,10 @@ export default function ProspectPage() {
     setSaving(true);
     setErrorMsg(null);
 
-    const { error } = await supabase.from('prospects').insert([
+    // Note: If you get "duplicate key value" error, the database sequence needs to be reset.
+    // Run this SQL in your database:
+    // SELECT setval('prospects_id_seq', (SELECT MAX(id) FROM prospects) + 1);
+    const { data, error } = await supabase.from('prospects').insert([
       {
         first_name: form.first_name.trim(),
         last_name: toNull(form.last_name),
@@ -711,12 +714,18 @@ export default function ProspectPage() {
         next_steps: toNull(form.next_steps),
         comments: toNull(form.comments),
       },
-    ]);
+    ]).select();
 
     setSaving(false);
 
     if (error) {
-      setToast('error', `Error saving: ${error.message}`);
+      // Provide helpful message for sequence error
+      if (error.message.includes('duplicate key') || error.message.includes('prospects_pkey')) {
+        setToast('error', 'Database error: ID sequence out of sync. Please contact administrator to reset the sequence.');
+        console.error('Database sequence needs reset. Run: SELECT setval(\'prospects_id_seq\', (SELECT MAX(id) FROM prospects) + 1);');
+      } else {
+        setToast('error', `Error saving: ${error.message}`);
+      }
       return;
     }
 
@@ -1007,13 +1016,13 @@ export default function ProspectPage() {
                         let titleText = '';
                         
                         if (isProspect) {
-                          bgClass = 'bg-[#CCFFFF]';
-                          solidBg = 'bg-[#CCFFFF]';
+                          bgClass = 'bg-[#43C6DB]';
+                          solidBg = 'bg-[#43C6DB]';
                           cursorClass = 'cursor-help';
                           titleText = 'Prospect Client 🏆';
                         } else if (isClosed) {
-                          bgClass = 'bg-[#F5F5F5]';
-                          solidBg = 'bg-[#F5F5F5]';
+                          bgClass = 'bg-[#737CA1]';
+                          solidBg = 'bg-[#737CA1]';
                           titleText = 'Prospect Closed';
                         } else if (isActive) {
                           bgClass = 'bg-emerald-50';

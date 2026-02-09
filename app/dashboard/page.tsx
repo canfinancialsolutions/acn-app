@@ -939,11 +939,11 @@ function ProgressSummaryTable({ rows, sortState, onSortChange }: { rows: Row[]; 
     { id: "last_name", label: "Last Name", defaultW: 130 }, 
     { id: "phone", label: "Phone", defaultW: 140 }, 
     { id: "email", label: "Email", defaultW: 280 }, 
-    { id: "last_call_date", label: "Called On", key: "last_call_date" as ProgressSortKey, defaultW: 120 }, 
+    { id: "last_call_date", label: "Called On", key: "last_call_date" as ProgressSortKey, defaultW: 180 }, 
     { id: "call_attempts", label: "No of Calls", key: "call_attempts" as ProgressSortKey, defaultW: 90 }, 
-    { id: "last_bop_date", label: "Last/Next BOP Call On", key: "last_bop_date" as ProgressSortKey, defaultW: 135 }, 
+    { id: "last_bop_date", label: "Last/Next BOP Call On", key: "last_bop_date" as ProgressSortKey, defaultW: 200 }, 
     { id: "bop_attempts", label: "No of BOP Calls", key: "bop_attempts" as ProgressSortKey, defaultW: 110 }, 
-    { id: "last_followup_date", label: "Last/Next FollowUp On", key: "last_followup_date" as ProgressSortKey, defaultW: 135 }, 
+    { id: "last_followup_date", label: "Last/Next FollowUp On", key: "last_followup_date" as ProgressSortKey, defaultW: 200 }, 
     { id: "followup_attempts", label: "No of FollowUp Calls", key: "followup_attempts" as ProgressSortKey, defaultW: 140 }, 
   ], []); 
   const getW = (id: string, def: number) => widths[id] ?? def; 
@@ -951,7 +951,7 @@ function ProgressSummaryTable({ rows, sortState, onSortChange }: { rows: Row[]; 
   const sortIcon = (k?: ProgressSortKey) => { if (!k) return null; if (sortState.key !== k) return <span className="ml-1 text-black">↕</span>; return <span className="ml-1 text-black">{sortState.dir === "asc" ? "↑" : "↓"}</span>; }; 
   const minWidth = cols.reduce((sum, c) => sum + getW(c.id, c.defaultW), 0); 
   
-  // Format date as dd/mm/yyyy
+  // Format date as dd/mm/yyyy, HH:MM:SS
   const fmtDate = (v: any) => { 
     if (!v) return "—"; 
     const d = new Date(v); 
@@ -960,7 +960,10 @@ function ProgressSummaryTable({ rows, sortState, onSortChange }: { rows: Row[]; 
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
-    return `${day}/${month}/${year}`; 
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    const seconds = String(d.getSeconds()).padStart(2, '0');
+    return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`; 
   }; 
   
   // Check if date is in current month

@@ -830,7 +830,7 @@ export default function Dashboard() {
               <input type="date" className="w-32 border border-slate-300 px-2 py-1" value={rangeEnd} onChange={(e) => setRangeEnd(e.target.value)} /> 
             </label> 
             <div className="flex gap-2 md:col-span-3"> 
-              <Button variant="secondary" onClick={() => fetchUpcoming()}><b>➡️</b></Button> 
+              <Button variant="secondary" onClick={() => fetchUpcoming()} disabled={!upcomingVisible}><b>➡️</b></Button> 
               <Button 
                 variant="secondary" 
                 onClick={() => { 
@@ -841,7 +841,7 @@ export default function Dashboard() {
                   setRangeEnd(end); 
                   fetchUpcoming(); 
                 }} 
-                disabled={upcomingLoading} 
+                disabled={upcomingLoading || !upcomingVisible} 
               > 
                 {upcomingLoading ? "Refreshing…" : "🔄"} 
               </Button> 
@@ -890,8 +890,8 @@ export default function Dashboard() {
         <Card title="Client Progress Summary📑"> 
           <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2"> 
             <input className="w-72 border border-slate-300 px-3 py-2" placeholder="Filter by client name..." value={progressFilter} onChange={(e) => { setProgressFilter(e.target.value); setProgressPage(0); }} /> 
-            <Button variant="secondary" onClick={() => setProgressVisible(true)}>➡️</Button> 
-            <Button variant="secondary" onClick={() => { setProgressFilter(""); fetchProgressSummary().then(() => setProgressVisible(true)); }} disabled={progressLoading}>{progressLoading ? "Loading…" : "🔄"}</Button> 
+            <Button variant="secondary" onClick={() => setProgressVisible(true)} disabled={!progressVisible}>➡️</Button> 
+            <Button variant="secondary" onClick={() => { setProgressFilter(""); fetchProgressSummary().then(() => setProgressVisible(true)); }} disabled={progressLoading || !progressVisible}>{progressLoading ? "Loading…" : "🔄"}</Button> 
             <Button variant="secondary" onClick={() => {
               const willShow = !progressVisible;
               setProgressVisible(willShow);
@@ -912,8 +912,8 @@ export default function Dashboard() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-2"> 
             <div className="flex flex-col md:flex-row md:items-center gap-2 w-full"> 
               <input className="w-80 border border-slate-300 px-3 py-2" placeholder="Search by first name, last name, or phone" value={q} onChange={(e) => setQ(e.target.value)} /> 
-              <Button variant="secondary" onClick={() => loadPage(0)}>➡️</Button> 
-              <Button variant="secondary" onClick={() => { clearSaveState(); setQ(""); loadPage(0); }}>🔄</Button> 
+              <Button variant="secondary" onClick={() => loadPage(0)} disabled={!recordsVisible}>➡️</Button> 
+              <Button variant="secondary" onClick={() => { clearSaveState(); setQ(""); loadPage(0); }} disabled={!recordsVisible}>🔄</Button> 
               <Button variant="secondary" onClick={saveSelectedRecord} disabled={!saveEnabled || batchSaving || !selectedRecordId}>Save</Button> 
               <Button variant="secondary" onClick={() => {
                 const willShow = !recordsVisible;

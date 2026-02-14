@@ -780,12 +780,11 @@ export default function Dashboard() {
       </>
     );
   })()}
-              <Button variant="secondary" onClick={toggleAllCards}>{allVisible ? "Hide Cards📦" : "Show Cards🗃️"}</Button> 
+              <Button variant="secondary" onClick={toggleAllCards}>
+                <span className="text-xs whitespace-nowrap">{allVisible ? "Hide Cards📦" : "Show Cards🗃️"}</span>
+              </Button> 
               <Button variant="secondary" onClick={logout}> 
-                <span className="inline-flex items-center gap-2"> 
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 002 2h3a2 2 0 002-2v-1m-6-10V5a2 2 0 012-2h3a2 2 0 012 2v1" /> 
-                   Logout ➜]
-                </span> 
+                <span className="text-xs whitespace-nowrap">Logout ➜</span>
               </Button> 
             </div> 
           </div> 

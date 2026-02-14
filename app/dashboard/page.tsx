@@ -739,8 +739,8 @@ export default function Dashboard() {
             <div className="flex items-center gap-2"> 
               <img src="/anunathan-logo.png" className="h-16 w-auto" alt="Logo" onError={(e) => ((e.currentTarget as HTMLImageElement).style.display = "none")} /> 
               <div> 
-                <div className="text-lg text-blue-700 whitespace-nowrap">Dashboard - Clients Report</div>
-                <div className="text-sm font-bold whitespace-nowrap" style={{ color: "#808000" }}>Building careers, protecting families</div>
+                <div className="text-lg text-blue-700 font-bold  whitespace-nowrap">Dashboard - Clients Report</div>
+                <div className="text-sm font-semi-bold whitespace-nowrap" style={{ color: "#808000" }}>Building careers, protecting families</div>
               </div> 
             </div> 
             

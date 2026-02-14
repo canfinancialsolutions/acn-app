@@ -732,28 +732,25 @@ export default function Dashboard() {
   }; 
   const hideZeroFormatter = (val: any) => { const n = Number(val); return Number.isFinite(n) && n === 0 ? "" : val; }; 
   return ( 
-    <div className="min-h-screen bg-gray-50"> 
+    <div className="min-h-screen"> 
       <div className="max-w-[1600px] mx-auto p-4 space-y-4"> 
-        <header className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"> 
-          <div className="flex items-center justify-between gap-4"> 
-            {/* Logo and Title Section */}
-            <div className="flex items-center gap-4"> 
-              <img src="/anunathan-logo.png" className="h-16 w-auto object-contain" alt="Logo" onError={(e) => ((e.currentTarget as HTMLImageElement).style.display = "none")} /> 
-              <div className="flex flex-col"> 
-                <div className="text-xl font-bold text-blue-700">Dashboard - Clients Report</div>
-                <div className="text-sm font-medium text-yellow-600">Building careers, protecting families</div>
-              </div> 
+        <header className="flex items-center justify-between gap-2"> 
+          <div className="flex items-center gap-2"> 
+            <img src="/anunathan-logo.png" className="h-16 w-auto" alt="Logo" onError={(e) => ((e.currentTarget as HTMLImageElement).style.display = "none")} /> 
+            <div> 
+              <div className="text-lg text-blue-700 whitespace-nowrap">Dashboard - Clients Report</div>
+              <div className="text-sm" style={{ color: "#808000" }}>Building careers, protecting families</div>
             </div> 
-            
-            {/* Stats and Actions Section */}
-            <div className="flex items-center gap-3"> 
+          </div> 
+          
+          <div className="flex items-center gap-2"> 
   {(() => {
     const successfulClientsCount = statusCounts["status_Successful Client"] || 0;
     const newClientsCount = statusCounts["client_status_New Client"] || 0;
     const latestIssuedDate = records.map(r => r.Issued).filter(Boolean).map(d => new Date(d)).sort((a,b)=>b.getTime()-a.getTime())[0];
      
     const cycleStart = latestIssuedDate ? latestIssuedDate.toLocaleDateString() : "—";
-    const cycleEnd = latestIssuedDate ? new Date(latestIssuedDate.getTime() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString() : "—";
+    const cycleEnd = latestIssuedDate ? new Date(latestIssuedDate.getTime() + 30 * 60 * 60 * 1000).toLocaleDateString() : "—";
 
     const cycleDays = latestIssuedDate ? Math.floor((Date.now()-latestIssuedDate.getTime())/(1000*60*60*24)) : 0;
     const today = new Date().toISOString().split("T")[0];
@@ -761,41 +758,40 @@ export default function Dashboard() {
      
     return (
       <>
-        <div className="px-4 py-2 bg-blue-50 border border-blue-200 rounded-md">
-          <div className="text-xs text-gray-600 mb-1">Successful Client👍</div>
-          <div className="text-lg font-bold text-blue-700">{successfulClientsCount}</div>
+        <div className="px-3 py-2 bg-gray-200 text-xs rounded text-center">
+          <div>Successful Client👍</div>
+          <div className="text-lg">{successfulClientsCount}</div>
         </div>
-        <div className="px-4 py-2 bg-green-50 border border-green-200 rounded-md">
-          <div className="text-xs text-gray-600 mb-1">New Clients✏️</div>
-          <div className="text-lg font-bold text-green-700">{newClientsCount}</div>
+        <div className="px-3 py-2 bg-gray-200 text-xs rounded text-center">
+          <div>New Clients✏️</div>
+          <div className="text-lg">{newClientsCount}</div>
         </div>
-        <div className="px-4 py-2 bg-purple-50 border border-purple-200 rounded-md">
-          <div className="text-xs text-gray-600 mb-1">Cycle Start on↪️</div>
-          <div className="text-lg font-bold text-purple-700">{cycleStart}</div>
+        <div className="px-3 py-2 bg-gray-200 text-xs rounded text-center">
+          <div>Cycle Start on↪️</div>
+          <div className="text-lg">{cycleStart}</div>
         </div>
-        <div className="px-4 py-2 bg-orange-50 border border-orange-200 rounded-md">
-          <div className="text-xs text-gray-600 mb-1">Cycle End on↩️</div>
-          <div className="text-lg font-bold text-orange-700">{cycleEnd}</div>
+        <div className="px-3 py-2 bg-gray-200 text-xs rounded text-center">
+          <div>Cycle End on↩️</div>
+          <div className="text-lg">{cycleEnd}</div>
         </div>
-        <div className="px-4 py-2 bg-indigo-50 border border-indigo-200 rounded-md">
-          <div className="text-xs text-gray-600 mb-1">Cycle Days🔄</div>
-          <div className="text-lg font-bold text-indigo-700">{cycleDays}</div>
+        <div className="px-3 py-2 bg-gray-200 text-xs rounded text-center">
+          <div>Cycle Days🔄</div>
+          <div className="text-lg">{cycleDays}</div>
         </div>
-        <div className="px-4 py-2 bg-red-50 border border-red-200 rounded-md">
-          <div className="text-xs text-gray-600 mb-1">Today Meetings📣</div>
-          <div className="text-lg font-bold text-red-700">{meetingTodayCount}</div>
+        <div className="px-3 py-2 bg-gray-200 text-xs rounded text-center">
+          <div>Today Meetings📣</div>
+          <div className="text-lg">{meetingTodayCount}</div>
         </div>
       </>
     );
   })()}
-              <Button variant="secondary" onClick={toggleAllCards}>{allVisible ? "Hide Cards📦" : "Show Cards🗃️"}</Button> 
-              <Button variant="secondary" onClick={logout}> 
-                <span className="inline-flex items-center gap-2"> 
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 002 2h3a2 2 0 002-2v-1m-6-10V5a2 2 0 012-2h3a2 2 0 012 2v1" /> 
-                   Logout ➜]
-                </span> 
-              </Button> 
-            </div> 
+            <Button variant="secondary" onClick={toggleAllCards}>{allVisible ? "Hide Cards📦" : "Show Cards🗃️"}</Button> 
+            <Button variant="secondary" onClick={logout}> 
+              <span className="inline-flex items-center gap-2"> 
+               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 002 2h3a2 2 0 002-2v-1m-6-10V5a2 2 0 012-2h3a2 2 0 012 2v1" /> 
+                 Logout ➜]
+              </span> 
+            </Button> 
           </div> 
         </header> 
         {error && (<div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">{error}</div>)} 

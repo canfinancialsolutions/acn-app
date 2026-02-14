@@ -862,8 +862,8 @@ export default function ProspectPage() {
         <div className="rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <img src="/anunathan-logo.png" alt="AnuNathan Financial Group" className="h-10 w-auto" />
-              <div>
+                  <img src="/anunathan-logo.png" className="h-16 w-auto" alt="Logo" onError={(e) => ((e.currentTarget as HTMLImageElement).style.display = "none")} /> 
+                <div>
                 <div className="text-1x3 font-bold text-[#1E5AA8]">Prospect List Tracking</div>
                  <div className="text-sm font-semibold text-[#808000]">Building careers, protecting families</div>
               </div>

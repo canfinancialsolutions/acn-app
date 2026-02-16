@@ -910,13 +910,18 @@ export default function Dashboard() {
               }
             }}>{progressVisible ? "Hide🗂️" : "Show🗂️"}</Button> 
             <div className="md:ml-auto flex items-center gap-2"> 
-              <Button variant="secondary" onClick={() => setProgressPage((p) => Math.max(0, p - 1))} disabled={!progressVisible || progressPageSafe <= 0}>◀️</Button> 
-              <Button variant="secondary" onClick={() => setProgressPage((p) => Math.min(progressTotalPages - 1, p + 1))} disabled={!progressVisible || progressPageSafe >= progressTotalPages - 1}>▶️</Button> 
+              <span className="text-xs text-black">Page {progressPageSafe + 1} of {progressTotalPages}</span>
+              <Button variant="secondary" onClick={() => setProgressPage((p) => Math.max(0, p - 1))} disabled={!progressVisible || progressPageSafe <= 0}>◀️ Previous</Button> 
+              <Button variant="secondary" onClick={() => setProgressPage((p) => Math.min(progressTotalPages - 1, p + 1))} disabled={!progressVisible || progressPageSafe >= progressTotalPages - 1}>Next ▶️</Button> 
             </div> 
           </div> 
           <div className="text-xs text-black mb-2">Click headers to sort.</div> 
           {progressVisible && (<ProgressSummaryTable rows={progressSlice} sortState={progressSort} onSortChange={(k) => setProgressSort((cur) => toggleProgressSort(cur, k))} />)} 
-          {progressVisible && (<div className="mt-2 text-xs text-black">Page <b>{progressPageSafe + 1}</b> of <b>{progressTotalPages}</b> • showing {PROGRESS_PAGE_SIZE} per page</div>)} 
+          {progressVisible && (
+            <div className="mt-2 text-xs text-black">
+              Showing {progressSlice.length} of {progressFilteredSorted.length} records • {PROGRESS_PAGE_SIZE} per page
+            </div>
+          )} 
         </Card> 
         <Card title="Clients List 🧑🏻‍🤝‍🧑🏻"> 
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-2"> 

@@ -64,6 +64,7 @@ type ProgressSortKey =
   | "followup_attempts"; 
 const ALL_PAGE_SIZE = 10; 
 const PROGRESS_PAGE_SIZE = 10;
+const UPCOMING_PAGE_SIZE = 10;
 
 const AUTH_COOKIE = "canfs_auth";
 
@@ -315,11 +316,14 @@ export default function Dashboard() {
   const [upcoming, setUpcoming] = useState<Row[]>([]); 
   const [upcomingLoading, setUpcomingLoading] = useState(false); 
   const [sortUpcoming, setSortUpcoming] = useState<{ key: SortKey; dir: SortDir }>({ key: "BOP_Date", dir: "desc" }); 
+  const [upcomingPage, setUpcomingPage] = useState(0);
+  const [upcomingPageJump, setUpcomingPageJump] = useState("1"); 
   const [progressRows, setProgressRows] = useState<Row[]>([]); 
   const [progressLoading, setProgressLoading] = useState(false); 
   const [progressFilter, setProgressFilter] = useState(""); 
   const [progressSort, setProgressSort] = useState<{ key: ProgressSortKey; dir: SortDir }>({ key: "last_call_date", dir: "desc" }); 
   const [progressPage, setProgressPage] = useState(0); 
+  const [progressPageJump, setProgressPageJump] = useState("1"); 
   const [q, setQ] = useState(""); 
   const [records, setRecords] = useState<Row[]>([]); 
   const [total, setTotal] = useState(0); 
@@ -746,6 +750,12 @@ export default function Dashboard() {
   const progressTotalPages = Math.max(1, Math.ceil(progressFilteredSorted.length / PROGRESS_PAGE_SIZE)); 
   const progressPageSafe = Math.min(progressTotalPages - 1, Math.max(0, progressPage)); 
   const progressSlice = progressFilteredSorted.slice(progressPageSafe * PROGRESS_PAGE_SIZE, progressPageSafe * PROGRESS_PAGE_SIZE + PROGRESS_PAGE_SIZE); 
+  
+  // Pagination for Upcoming Meetings
+  const upcomingTotalPages = Math.max(1, Math.ceil(upcoming.length / UPCOMING_PAGE_SIZE));
+  const upcomingPageSafe = Math.min(upcomingTotalPages - 1, Math.max(0, upcomingPage));
+  const upcomingSlice = upcoming.slice(upcomingPageSafe * UPCOMING_PAGE_SIZE, upcomingPageSafe * UPCOMING_PAGE_SIZE + UPCOMING_PAGE_SIZE);
+  
   const allVisible = trendsVisible && upcomingVisible && progressVisible && recordsVisible; 
   const toggleAllCards = () => { 
     const target = !allVisible; 
@@ -899,6 +909,29 @@ export default function Dashboard() {
                   {upcomingVisible ? "Hide🗂️" : "Show🗂️"} 
                 </span> 
               </Button> 
+              <div className="flex items-center gap-2 border border-slate-300 px-2 py-1 bg-white">
+                <span className="text-xs font-semibold text-black">Go Page</span>
+                <input 
+                  type="number" 
+                  min={1} 
+                  max={upcomingTotalPages} 
+                  className="w-16 border border-slate-300 px-2 py-1 text-sm" 
+                  value={upcomingPageJump} 
+                  onChange={(e) => setUpcomingPageJump(e.target.value)} 
+                />
+                <Button 
+                  variant="secondary" 
+                  onClick={() => { 
+                    const n = Number(upcomingPageJump); 
+                    if (!Number.isFinite(n)) return; 
+                    const p = Math.min(upcomingTotalPages, Math.max(1, Math.floor(n))); 
+                    setUpcomingPage(p - 1); 
+                  }} 
+                  disabled={!upcomingVisible || upcomingTotalPages <= 1}
+                >➡️</Button>
+              </div>
+              <Button variant="secondary" onClick={() => setUpcomingPage((p) => Math.max(0, p - 1))} disabled={!upcomingVisible || upcomingPageSafe <= 0}>◀️</Button>
+              <Button variant="secondary" onClick={() => setUpcomingPage((p) => Math.min(upcomingTotalPages - 1, p + 1))} disabled={!upcomingVisible || upcomingPageSafe >= upcomingTotalPages - 1}>▶️</Button>
             </div> 
           </div> 
           <div className="flex items-center justify-between mb-2 mt-3"> 
@@ -909,7 +942,7 @@ export default function Dashboard() {
           </div> 
           {upcomingVisible && ( 
             <ExcelTableEditable 
-              rows={upcoming} 
+              rows={upcomingSlice} 
               savingId={savingId} 
               onUpdate={updateCell} 
               preferredOrder={[ 
@@ -928,6 +961,11 @@ export default function Dashboard() {
               viewOnlyPopupKeys={new Set(["work_details"])} 
             /> 
           )} 
+          {upcomingVisible && (
+            <div className="mt-2 text-xs text-black">
+              Page {upcomingPageSafe + 1} of {upcomingTotalPages} • Showing {upcomingSlice.length} of {upcoming.length} records • {UPCOMING_PAGE_SIZE} per page
+            </div>
+          )} 
         </Card> 
         <Card title="Client Progress Summary📑"> 
           <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2"> 
@@ -942,7 +980,27 @@ export default function Dashboard() {
               }
             }}>{progressVisible ? "Hide🗂️" : "Show🗂️"}</Button> 
             <div className="md:ml-auto flex items-center gap-2"> 
-              <span className="text-xs text-black">Page {progressPageSafe + 1} of {progressTotalPages}</span>
+              <div className="flex items-center gap-2 border border-slate-300 px-2 py-1 bg-white">
+                <span className="text-xs font-semibold text-black">Go Page</span>
+                <input 
+                  type="number" 
+                  min={1} 
+                  max={progressTotalPages} 
+                  className="w-16 border border-slate-300 px-2 py-1 text-sm" 
+                  value={progressPageJump} 
+                  onChange={(e) => setProgressPageJump(e.target.value)} 
+                />
+                <Button 
+                  variant="secondary" 
+                  onClick={() => { 
+                    const n = Number(progressPageJump); 
+                    if (!Number.isFinite(n)) return; 
+                    const p = Math.min(progressTotalPages, Math.max(1, Math.floor(n))); 
+                    setProgressPage(p - 1); 
+                  }} 
+                  disabled={!progressVisible || progressTotalPages <= 1}
+                >➡️</Button>
+              </div>
               <Button variant="secondary" onClick={() => setProgressPage((p) => Math.max(0, p - 1))} disabled={!progressVisible || progressPageSafe <= 0}>◀️ Previous</Button> 
               <Button variant="secondary" onClick={() => setProgressPage((p) => Math.min(progressTotalPages - 1, p + 1))} disabled={!progressVisible || progressPageSafe >= progressTotalPages - 1}>Next ▶️</Button> 
             </div> 
@@ -951,7 +1009,7 @@ export default function Dashboard() {
           {progressVisible && (<ProgressSummaryTable rows={progressSlice} sortState={progressSort} onSortChange={(k) => setProgressSort((cur) => toggleProgressSort(cur, k))} />)} 
           {progressVisible && (
             <div className="mt-2 text-xs text-black">
-              Showing {progressSlice.length} of {progressFilteredSorted.length} records • {PROGRESS_PAGE_SIZE} per page
+              Page {progressPageSafe + 1} of {progressTotalPages} • Showing {progressSlice.length} of {progressFilteredSorted.length} records • {PROGRESS_PAGE_SIZE} per page
             </div>
           )} 
         </Card> 

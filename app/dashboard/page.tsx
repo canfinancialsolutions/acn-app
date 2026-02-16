@@ -619,23 +619,32 @@ export default function Dashboard() {
   }
 
   function handlePendingChange(id: string, key: string, value: string) {
-    // Track edits only for the selected record
-    if (!selectedRecordId || String(selectedRecordId) !== String(id)) return;
+    // Always track changes for the row being edited
+    // The selectedRecordId will be set by handleRowSelect when the row is clicked
     const baseRow = (records ?? []).find((r) => String(r.id) === String(id));
     if (!baseRow) return;
+    
     const baseVal = String(getRowInputString(baseRow, key) ?? '');
+    const newVal = String(value ?? '');
+    
     setPendingEdits((prev) => {
       const next = { ...prev };
       const rowEdits = { ...(next[id] || {}) };
-      if (String(value ?? '') === baseVal) {
+      
+      // Check if value has actually changed
+      if (newVal === baseVal || (!newVal && !baseVal)) {
         delete rowEdits[key];
       } else {
-        rowEdits[key] = String(value ?? '');
+        rowEdits[key] = newVal;
       }
+      
       if (Object.keys(rowEdits).length === 0) delete next[id];
       else next[id] = rowEdits;
       return next;
     });
+    
+    // Also ensure this row is selected
+    setSelectedRecordId(id);
   }
 
   async function saveSelectedRecord() {

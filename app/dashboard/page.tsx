@@ -1436,7 +1436,7 @@ function ExcelTableEditable({
                                       type="checkbox"
                                       checked={isChecked}
                                       onChange={() => {
-                                        const newSet = new Set(activeFilter || new Set());
+                                        const newSet = new Set<string>(activeFilter || new Set<string>());
                                         if (isChecked && isFiltered) {
                                           newSet.delete(value);
                                         } else {

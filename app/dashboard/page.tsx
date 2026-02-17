@@ -332,6 +332,10 @@ export default function Dashboard() {
   const [progressSort, setProgressSort] = useState<{ key: ProgressSortKey; dir: SortDir }>({ key: "last_call_date", dir: "desc" }); 
   const [progressPage, setProgressPage] = useState(0); 
   const [progressPageJump, setProgressPageJump] = useState("1"); 
+  
+  // Column filters for all cards
+  const [recordsColumnFilters, setRecordsColumnFilters] = useState<Record<string, Set<string>>>({});
+  
   const [q, setQ] = useState(""); 
   const [records, setRecords] = useState<Row[]>([]); 
   const [total, setTotal] = useState(0); 
